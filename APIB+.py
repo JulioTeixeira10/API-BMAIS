@@ -41,7 +41,7 @@ def tratamento():
     index15 = checkresponse.find("<ErrCod>15</ErrCod>")
     index17 = checkresponse.find("<ErrCod>17</ErrCod>")
     if index1 > 1:
-        errodesc = " A loja informada não foi encontrada"
+        errodesc = "A loja informada não foi encontrada"
     elif index2 > 1:
         errodesc = "O usuario informado é inválido"
     elif index3 > 1:
