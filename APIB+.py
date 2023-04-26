@@ -5,6 +5,7 @@ from configparser import ConfigParser
 import datetime
 import logging
 import urllib.parse
+import xml.etree.ElementTree as ET
 
 #Diretório dos dados
 dirDados = "C:\\Bancamais\\Fastcommerce\\DadosLoja" 
@@ -141,3 +142,27 @@ with open(dirXML,"w+") as r:
     r.close()
 
 logger.info(f"Request enviada com sucesso, o XML foi recebido")
+
+
+
+xml_string = response.text
+
+root = ET.fromstring(xml_string)
+
+result = {}
+
+for record in root.findall('Record'):
+    id_produto = record.find("Field[@Name='IDProduto']").attrib['Value']
+    qtd = int(record.find("Field[@Name='Qtd']").attrib['Value'])
+    if id_produto in result:
+        result[id_produto] += qtd
+    else:
+        result[id_produto] = qtd
+
+with open("C:\\Users\\Usefr\\Desktop\\Integração[Bmais - FC ]\\APIB+\\teste.txt","w+") as file:
+    for key in result:
+        file.write(key)
+        file.write(" ")
+        file.write(str(result[key]))
+        file.write("\n")
+    file.close()
