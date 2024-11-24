@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from configparser import ConfigParser
 import datetime
 import logging
+import sys
 import urllib.parse
 import xml.etree.ElementTree as ET
 
@@ -17,7 +18,7 @@ time = today_datetime.strftime('%d/%m/%Y %H:%M:%S')
 #Configuração do logger
 logger = logging.getLogger('my_logger') #Cria o objeto de log
 logger.setLevel(logging.INFO) #Configura o nível de log
-handler = logging.FileHandler('C:\\Bancamais\\Fastcommerce\\Log2\\log_file.log') #Cria arquivo handler
+handler = logging.FileHandler('C:\\Bancamais\\Fastcommerce\\Logs\\LogB+\\log_file.log') #Cria arquivo handler
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', '%Y-%m-%d %H:%M:%S') #Define o formato do log
 handler.setFormatter(formatter) #Define o formato do log para o handler
 logger.addHandler(handler) #Adiciona o handler ao logger
@@ -97,8 +98,8 @@ DataFinalEncoded = urllib.parse.quote(DataFinal)
 DI = DataInicial.replace("/","-")
 
 #Diretório do XML e do arquivo de erro
-dirXML = f"C:\\Bancamais\\Fastcommerce\\XML\\FC[{DI[0:10]}].txt"
-dirErros = f"C:\\Bancamais\\Fastcommerce\\Erros2\\ERRO[{DI[0:10]}].txt" 
+dirXML = f"C:\\Bancamais\\Fastcommerce\\XMLs\\XMLB+\\FC[{DI[0:10]}].txt"
+dirErros = f"C:\\Bancamais\\Fastcommerce\\Erros2\\ErrosB+\\ERRO[{DI[0:10]}].txt" 
 
 #Bloco que manda a request com os parâmetros formatados
 url = "https://www.rumo.com.br/sistema/adm/APILogon.asp"
@@ -114,20 +115,21 @@ except:
         e.write("ERRO de CONEXÃO ou de CERTIFICADO SSL. Se asegure de que seu PC está conectado à internet e que a data não esteja muito adiantada.")
         e.close()
         logger.error(f"Houve um erro na request")
-        exit()
+        sys.exit()
 
 #Tratamento de erro
 checkresponse = response.text
+
 tratamento()
 if errodesc == []:
     pass
 else:
     erro(errodesc)
     logger.error(f"Houve um erro na request")
-    exit()
+    sys.exit()
 
 #Formatação da resposta do servidor 
-soup = BeautifulSoup(response.text, "xml")
+soup = BeautifulSoup(response.text, features="xml")
 report_tag = soup.find('Report')
 attrs_copy = dict(report_tag.attrs)
 
@@ -159,7 +161,7 @@ for record in root.findall('Record'):
     else:
         result[id_produto] = qtd
 
-with open("C:\\Users\\Usefr\\Desktop\\Integração[Bmais - FC ]\\APIB+\\teste.txt","w+") as file:
+with open(dirXML,"w+") as file:
     for key in result:
         file.write(key)
         file.write(" ")
